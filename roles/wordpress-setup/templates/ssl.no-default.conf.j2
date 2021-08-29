@@ -10,13 +10,7 @@
 server {
   listen [::]:443 ssl default_server deferred;
   listen 443 ssl default_server deferred;
-
-  include h5bp/directive-only/ssl.conf;
-  ssl_dhparam /etc/nginx/ssl/dhparams.pem;
-
-  ssl_certificate         {{ nginx_path }}/ssl/no_default.cert;
-  ssl_trusted_certificate {{ nginx_path }}/ssl/no_default.cert;
-  ssl_certificate_key     {{ nginx_path }}/ssl/no_default.key;
+  ssl_reject_handshake on;
 
   return 444;
 }

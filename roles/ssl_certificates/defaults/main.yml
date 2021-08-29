@@ -1,0 +1,19 @@
+sites_using_ssl: "{{ wordpress_sites.values() | map(attribute='ssl') | selectattr('enabled', 'equalto', true) }}"
+sites_using_acme_ssl: "{{ sites_using_ssl | rejectattr('manual', 'defined') | map(attribute='acme') | map('default', ssl_defaults.acme )}}"
+sites_using_manual_ssl: "{{ sites_using_ssl | selectattr('manual', 'defined') }}"
+site_uses_acme: "{{ (ssl_enabled and 'acme' in site_ssl) | bool }}"
+site_uses_acme_http_challenge: "{{ (ssl_enabled and site_ssl.acme.challenge.type == 'http-01') | bool }}"
+missing_hosts: "{{ site_hosts | difference((current_hosts.results | selectattr('item.key', 'equalto', item.key) | selectattr('stdout_lines', 'defined') | sum(attribute='stdout_lines', start=[]) | map('trim') | list | join(' ')).split(' ')) }}"
+
+acme_ca_server: 'https://acme-v02.api.letsencrypt.org'
+acme_challenges_path: "{{ www_root }}/letsencrypt"
+
+step_ca_path: /etc/step-ca
+
+# the minimum age (in days) after which a certificate will be renewed
+ssl_renewal_min_age: 60
+
+# the days of a month the cronjob should be run. Make sure to run it rather often, three times per month is a pretty
+# good value. It does not harm to run it often, as it will only regenerate certificates that have passed a certain age
+# (60 days by default).
+ssl_renewal_cronjob_daysofmonth: 1,11,21

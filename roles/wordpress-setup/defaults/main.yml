@@ -6,9 +6,6 @@ ssl_default_site:
   no_default:
     site_hosts:
       - canonical: request.is.invalid
-    ssl:
-      enabled: true
-      provider: self-signed
     multisite: {}
 
 nginx_sites_confs:

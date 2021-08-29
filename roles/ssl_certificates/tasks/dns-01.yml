@@ -1,0 +1,12 @@
+- name: Generate certificate via dns-01 challenge
+  shell: >
+    TODO FIX
+    certbot certonly
+    --noninteractive
+    --agree-tos
+    --email {{ acme_ca_contact_emails | join(",") }}
+    --cert-name {{ item.key }}
+    --server {{ acme_ca_server }}
+    --dns-{{ site_ssl.acme.challenge.options.provider }}
+    {{ site_ssl.acme.challenge.options.map('regex_replace', '(^.*$)', '--dns-\\1') | join (' ') }}
+    --domains {{ site_hosts | join(",") }}

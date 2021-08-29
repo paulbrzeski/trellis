@@ -1,0 +1,24 @@
+- name: Copy manual SSL certificate
+  copy:
+    src: "{{ site_ssl.manual.certificate }}"
+    dest: "{{ nginx_ssl_path }}/{{ site_ssl.manual.certificate | basename }}"
+    mode: '0640'
+  with_dict: "{{ wordpress_sites }}"
+  notify: reload nginx
+
+- name: Copy manual SSL key
+  copy:
+    src: "{{ site_ssl.manual.key }}"
+    dest: "{{ nginx_ssl_path }}/{{ site_ssl.manual.key | basename }}"
+    mode: '0600'
+  with_dict: "{{ wordpress_sites }}"
+  notify: reload nginx
+
+- name: Download SSL client certificate
+  get_url:
+    url: "{{ site_ssl.manual.client_certificate_url }}"
+    dest: "{{ nginx_ssl_path }}/client-{{ (site_ssl.client_certificate_url | hash('md5'))[:7] }}.crt"
+    mode: '0640'
+  with_dict: "{{ wordpress_sites }}"
+  when: site_ssl.manual.client_certificate_url is defined
+  tags: wordpress-setup-nginx-client-cert
