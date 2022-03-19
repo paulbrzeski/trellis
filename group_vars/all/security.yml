@@ -20,6 +20,11 @@ fail2ban_services_custom:
     enabled: "false"
     port: http,https
     logpath: "{{ www_root }}/**/logs/access.log"
+  - name: wordpress_wp_login
+    filter: wordpress-wp-login
+    enabled: "false"
+    port: http,https
+    logpath: "{{ www_root }}/**/logs/access.log"
 
 # If sshd_permit_root_login: false, admin_user must be in 'users' (`group_vars/all/users.yml`) with sudo group
 # and in 'vault_users' (`group_vars/staging/vault.yml`, `group_vars/production/vault.yml`)
